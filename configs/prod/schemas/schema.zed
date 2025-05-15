@@ -27,6 +27,7 @@ definition rbac/group {
 definition rbac/platform {
 	permission binding = t_binding
 	relation t_binding: rbac/role_binding
+	permission ros_read_analysis = t_binding->ros_read_analysis
 	permission inventory_host_update = t_binding->inventory_host_update
 	permission inventory_host_view = t_binding->inventory_host_view
 	permission notifications_applications_view = t_binding->notifications_applications_view
@@ -214,6 +215,7 @@ definition rbac/role {
 	relation t_inventory_groups_read: rbac/principal:*
 	permission inventory_groups_write = t_inventory_groups_write
 	relation t_inventory_groups_write: rbac/principal:*
+	permission ros_read_analysis = inventory_host_view + ros_all_all + ros_all_read + t_child->ros_read_analysis
 	permission inventory_host_update = inventory_hosts_write + inventory_hosts_all + inventory_all_write + inventory_all_all + all_all_all + t_child->inventory_host_update
 	permission inventory_host_view = inventory_hosts_read + inventory_hosts_all + inventory_all_read + inventory_all_all + all_all_all + t_child->inventory_host_view
 	permission inventory_hosts_all = t_inventory_hosts_all
@@ -401,6 +403,7 @@ definition rbac/role {
 }
 
 definition rbac/role_binding {
+    permission ros_read_analysis = (subject & t_role->ros_read_analysis)
 	permission inventory_host_update = (subject & t_role->inventory_host_update)
 	permission inventory_host_view = (subject & t_role->inventory_host_view)
 	permission notifications_applications_view = (subject & t_role->notifications_applications_view)
@@ -430,6 +433,7 @@ definition rbac/role_binding {
 definition rbac/tenant {
 	permission binding = t_binding
 	relation t_binding: rbac/role_binding
+	permission ros_read_analysis = t_binding->ros_read_analysis + t_platform->ros_read_analysis
 	permission inventory_host_update = t_binding->inventory_host_update + t_platform->inventory_host_update
 	permission inventory_host_view = t_binding->inventory_host_view + t_platform->inventory_host_view
 	permission notifications_applications_view = t_binding->notifications_applications_view + t_platform->notifications_applications_view
@@ -457,6 +461,7 @@ definition rbac/tenant {
 definition rbac/workspace {
 	permission binding = t_binding
 	relation t_binding: rbac/role_binding
+	permission ros_read_analysis = t_binding->ros_read_analysis + t_parent->ros_read_analysis
 	permission inventory_host_update = t_binding->inventory_host_update + t_parent->inventory_host_update
 	permission inventory_host_view = t_binding->inventory_host_view + t_parent->inventory_host_view
 	permission notifications_applications_view = t_binding->notifications_applications_view + t_parent->notifications_applications_view
